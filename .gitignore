@@ -3,3 +3,8 @@ build
 .DS_Store
 /dist
 /build
+/dist/.icon-ico
+/dist/win-ia32-unpacked
+/dist/builder-effectiv-config.yaml
+/dist/工位屏软件 Setup 1.0.0.exe blockmap
+/dist/智能工位屏 Setup 1.0.0.exe.blockmap
