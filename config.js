@@ -1,7 +1,7 @@
 const {app} = require('electron');
 
 const config = {
-    mainLoadURL: 'http://y.test.guanmai.cn/ ',
+    mainLoadURL: 'https://x.guanmai.cn/mes',
     printLoadURL: 'https://js.guanmai.cn/build/mes/print.html',
     isOpenDevTools: false,
     showPrint: false,
