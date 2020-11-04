@@ -28,7 +28,10 @@ function createWindow () {
   })
 }
 
-function createPrinterWindow() {
+function createPrinterWindow(url) {
+  if(printerWindow) {
+    return
+  }
   printerWindow = new BrowserWindow({
       // 尺寸根据 7cm 5cm 在 chrome 中得到具体 size
       width: 264,
@@ -41,7 +44,7 @@ function createPrinterWindow() {
       }
   });
 
-  printerWindow.loadURL(printLoadURL);
+  printerWindow.loadURL(url || printLoadURL);
 
   if (isOpenPrintDevTools) {
       printerWindow.webContents.openDevTools();
@@ -56,7 +59,7 @@ app.whenReady().then(() => {
   app.allowRendererProcessReuse = false
 
   createWindow()
-  createPrinterWindow()
+  // createPrinterWindow()
 })
 
 app.on('window-all-closed', () => {
@@ -79,4 +82,8 @@ ipcMain.handle('print', (event, payload) => {
   // 像打印窗口发送 print 事件
   printerWindow.webContents.send('print', payload)
   // return payload
+})
+
+ipcMain.handle('openPrintWindow', (event, payload) => {
+  createPrinterWindow(payload)
 })
