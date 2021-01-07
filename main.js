@@ -1,18 +1,27 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
-const {mainLoadURL, printLoadURL, isOpenDevTools, showPrint, isOpenPrintDevTools} = require('./config');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron')
+const {
+  mainLoadURL,
+  printLoadURL,
+  isOpenDevTools,
+  showPrint,
+  isOpenPrintDevTools,
+} = require('./dev_config')
+const handleUpdate = require('./src/main/app_update')
+const { appEvent } = require('./src/event')
 
 let mainWindow = null
 let printerWindow = null
 
-function createWindow () {
+function createWindow() {
   // 创建浏览器窗口
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    center: true,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
-    }
+      enableRemoteModule: true,
+    },
   })
   mainWindow.focus()
 
@@ -23,44 +32,51 @@ function createWindow () {
   }
 
   mainWindow.on('closed', function () {
-    mainWindow = null;
-    app.quit();
+    mainWindow = null
+    app.quit()
   })
 }
 
 function createPrinterWindow(url) {
-  if(printerWindow) {
+  if (printerWindow) {
     return
   }
   printerWindow = new BrowserWindow({
-      // 尺寸根据 7cm 5cm 在 chrome 中得到具体 size
-      width: 264,
-      height: 188,
-      frame: false,
-      show: showPrint,
-      webPreferences: {
-        nodeIntegration: true,
-        enableRemoteModule: true
-      }
-  });
+    // 尺寸根据 7cm 5cm 在 chrome 中得到具体 size
+    width: 264,
+    height: 188,
+    frame: false,
+    show: showPrint,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    },
+  })
 
-  printerWindow.loadURL(url || printLoadURL);
+  printerWindow.loadURL(url || printLoadURL)
 
   if (isOpenPrintDevTools) {
-      printerWindow.webContents.openDevTools();
+    printerWindow.webContents.openDevTools()
   }
 
-  printerWindow.on("closed", () => {
-      printerWindow = null;
-  });
+  printerWindow.on('closed', () => {
+    printerWindow = null
+  })
 }
 
 app.whenReady().then(() => {
   app.allowRendererProcessReuse = false
 
+  Menu.setApplicationMenu(null)
+
   createWindow()
   // createPrinterWindow()
+  handleUpdate(sendUpdateMessage)
 })
+
+function sendUpdateMessage(msgObj) {
+  mainWindow.webContents.send(appEvent.UPDATE_MESSAGE, msgObj)
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

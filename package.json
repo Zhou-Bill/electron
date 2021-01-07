@@ -1,6 +1,6 @@
 {
   "name": "gm-electron-mes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "智能工位屏软件",
   "main": "main.js",
   "scripts": {
@@ -12,10 +12,12 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^10.1.3",
-    "electron-builder": "^22.9.1"
+    "electron-builder": "^22.9.1",
+    "prettier": "^2.2.1"
   },
   "dependencies": {
-    "serialport": "^9.0.1"
+    "electron-updater": "^4.3.5",
+    "serialport": "^9.0.4"
   },
   "build": {
     "appId": "cn.guanmai.x.mes",
@@ -23,6 +25,10 @@
     "copyright": "Copyright © 2020 gm",
     "directories": {
       "output": "dist"
+    },
+    "publish": {
+      "provider": "generic",
+      "url": "https://js.guanmai.cn/v2/static/file/mes/"
     },
     "win": {
       "target": [
@@ -34,6 +40,10 @@
         }
       ],
       "icon": "icon/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     }
   }
 }
