@@ -15,18 +15,6 @@ function handleUpdate(dispatchUpdateMsg = () => {}) {
   autoUpdater.setFeedURL('https://js.guanmai.cn/v2/static/file/mes/')
 
   autoUpdater.on('error', (e) => {
-    // dialog
-    //   .showMessageBox({
-    //     title: '升级提示',
-    //     type: 'question',
-    //     message: update_msg.error.msg,
-    //     buttons: ['立即更新', '暂不更新'],
-    //     defaultId: 0,
-    //     // detail: e.message,
-    //   })
-    //   .then(({ response, checkboxChecked }) => {
-    //     console.log('==>', response, checkboxChecked)
-    //   })
     dispatchUpdateMsg(update_msg.error)
   })
 
@@ -46,35 +34,38 @@ function handleUpdate(dispatchUpdateMsg = () => {}) {
 
   autoUpdater.on('download-progress', (progressObj) => {
     dispatchUpdateMsg({
-      ...msg.downloading,
+      ...update_msg.downloading,
     })
   })
 
   autoUpdater.on('update-downloaded', (progressObj) => {
-    dispatchUpdateMsg(msg.canUpdateNow)
-    dialog.showMessageBox({
-      title: '升级提示',
-      type: 'question',
-      message: update_msg.canUpdateNow.msg,
-      buttons: ['立即更新', '暂不更新'],
-      defaultId: 0,
-    }).then(({ response }) => {
-      if(response === 0) {
-        autoUpdater.quitAndInstall(true, true)
-      }
-    })
+    dispatchUpdateMsg(update_msg.canUpdateNow)
+    dialog
+      .showMessageBox({
+        title: '升级提示',
+        type: 'question',
+        message: update_msg.canUpdateNow.msg,
+        buttons: ['立即更新', '暂不更新'],
+        defaultId: 0,
+        cancelId: 1,
+      })
+      .then(({ response }) => {
+        if (response === 0) {
+          autoUpdater.quitAndInstall(true, true)
+        }
+      })
     // ipcMain.handle(eventFromMain.UPDATE_NOW, (event, payload) => {
     //   autoUpdater.quitAndInstall(true, true)
     // })
   })
 
   ipcMain.handle(eventFromMain.CHECK_FOR_UPDATE, (event, payload) => {
-    autoUpdater.checkForUpdates()
+    // autoUpdater.checkForUpdates()
     autoUpdater.checkForUpdatesAndNotify()
   })
 
   autoUpdater
-    .checkForUpdates()
+    .checkForUpdatesAndNotify()
     .then(({ updateInfo }) => {
       console.log('updateInfo', updateInfo)
     })
