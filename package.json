@@ -1,6 +1,6 @@
 {
   "name": "gm-electron-mes",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "智能工位屏软件",
   "main": "main.js",
   "scripts": {
