@@ -15,12 +15,13 @@ let printerWindow = null
 function createWindow() {
   // 创建浏览器窗口
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 1024,
     center: true,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true,
+      // enableRemoteModule: true,
+      contextIsolation: false,
     },
   })
   mainWindow.focus()
@@ -49,7 +50,8 @@ function createPrinterWindow(url) {
     show: showPrint,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true,
+      // enableRemoteModule: true,
+      contextIsolation: false,
     },
   })
 
