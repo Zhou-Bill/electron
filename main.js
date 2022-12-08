@@ -8,7 +8,7 @@ const {
 } = require('./dev_config')
 const handleUpdate = require('./src/main/app_update')
 const { appEvent } = require('./src/event')
-require('@electron/remote/main').initialize()
+const remote = require('@electron/remote/main')
 
 let mainWindow = null
 let printerWindow = null
@@ -75,6 +75,9 @@ app.whenReady().then(() => {
   createWindow()
   // createPrinterWindow()
   handleUpdate(sendUpdateMessage)
+
+  remote.initialize()
+  remote.enable(mainWindow.webContents)
 })
 
 function sendUpdateMessage(msgObj) {
