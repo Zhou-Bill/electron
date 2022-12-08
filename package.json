@@ -16,6 +16,7 @@
     "prettier": "^2.4.1"
   },
   "dependencies": {
+    "@electron/remote": "^2.0.9",
     "electron-updater": "^4.3.9",
     "serialport": "^10.4.0"
   },

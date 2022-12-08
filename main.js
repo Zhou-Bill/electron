@@ -8,6 +8,7 @@ const {
 } = require('./dev_config')
 const handleUpdate = require('./src/main/app_update')
 const { appEvent } = require('./src/event')
+require('@electron/remote/main').initialize()
 
 let mainWindow = null
 let printerWindow = null
