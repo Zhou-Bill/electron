@@ -20,7 +20,7 @@ function createWindow() {
     center: true,
     webPreferences: {
       nodeIntegration: true,
-      // enableRemoteModule: true,
+      enableRemoteModule: true,
       contextIsolation: false,
     },
   })
@@ -50,7 +50,7 @@ function createPrinterWindow(url) {
     show: showPrint,
     webPreferences: {
       nodeIntegration: true,
-      // enableRemoteModule: true,
+      enableRemoteModule: true,
       contextIsolation: false,
     },
   })
