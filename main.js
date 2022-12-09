@@ -65,6 +65,8 @@ function createPrinterWindow(url) {
   printerWindow.on('closed', () => {
     printerWindow = null
   })
+
+  remote.enable(printerWindow.webContents)
 }
 
 app.whenReady().then(() => {
