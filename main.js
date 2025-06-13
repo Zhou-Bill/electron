@@ -111,3 +111,5 @@ ipcMain.handle('print', (event, payload) => {
 ipcMain.handle('openPrintWindow', (event, payload) => {
   createPrinterWindow(payload)
 })
+app.commandLine.appendSwitch('ignore-certificate-errors')
+app.commandLine.appendSwitch('allow-insecure-localhost', 'true')
