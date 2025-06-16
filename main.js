@@ -8,25 +8,57 @@ const {
 } = require('./dev_config')
 const handleUpdate = require('./src/main/app_update')
 const { appEvent } = require('./src/event')
-const remote = require('@electron/remote/main')
+
+app.commandLine.appendSwitch('disable-web-security')
+app.commandLine.appendSwitch('ignore-certificate-errors')
+app.commandLine.appendSwitch('allow-insecure-localhost', 'true')
 
 let mainWindow = null
 let printerWindow = null
-
 function createWindow() {
   // 创建浏览器窗口
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 1024,
+    width: 800,
+    height: 600,
     center: true,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true,
       contextIsolation: false,
+      enableRemoteModule: true,
     },
   })
+
+  mainWindow.webContents.session.setCertificateVerifyProc((request, callback) => {
+      // 对于所有请求都允许通过，但保持会话状态
+      callback(0);
+  });
   mainWindow.focus()
 
+  const myMenuTemplate = [
+    {
+      // 设置菜单项文本
+      label: '操作',
+      // 设置子菜单
+      submenu: [
+        {
+          label: '刷新',
+          accelerator: "CmdOrCtrl+R", 
+          click: () => {
+            mainWindow.reload();
+          }
+        },
+        {
+          label: '打开控制台',
+          click: () => {
+            mainWindow.webContents.openDevTools()
+          }
+        }
+      ]
+    },
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(myMenuTemplate))
+  console.log(mainLoadURL)
   mainWindow.loadURL(mainLoadURL)
 
   if (isOpenDevTools) {
@@ -50,11 +82,19 @@ function createPrinterWindow(url) {
     frame: false,
     show: showPrint,
     webPreferences: {
-      nodeIntegration: true,
-      enableRemoteModule: true,
+       nodeIntegration: true,
       contextIsolation: false,
+      enableRemoteModule: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false
+
     },
   })
+
+  printerWindow.webContents.session.setCertificateVerifyProc((request, callback) => {
+    callback(0);
+  });
+
 
   printerWindow.loadURL(url || printLoadURL)
 
@@ -65,21 +105,20 @@ function createPrinterWindow(url) {
   printerWindow.on('closed', () => {
     printerWindow = null
   })
-
-  remote.enable(printerWindow.webContents)
 }
 
-app.whenReady().then(() => {
-  app.allowRendererProcessReuse = false
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  event.preventDefault();
+  callback(true); // 允许继续加载
+});
 
-  Menu.setApplicationMenu(null)
+app.whenReady().then(async () => {
+  await session.defaultSession.clearCache()
+  app.allowRendererProcessReuse = false
 
   createWindow()
   // createPrinterWindow()
   handleUpdate(sendUpdateMessage)
-
-  remote.initialize()
-  remote.enable(mainWindow.webContents)
 })
 
 function sendUpdateMessage(msgObj) {
@@ -101,6 +140,7 @@ app.on('activate', () => {
   }
 })
 
+
 // 接受渲染进程对 print 事件
 ipcMain.handle('print', (event, payload) => {
   // 像打印窗口发送 print 事件
@@ -111,5 +151,3 @@ ipcMain.handle('print', (event, payload) => {
 ipcMain.handle('openPrintWindow', (event, payload) => {
   createPrinterWindow(payload)
 })
-app.commandLine.appendSwitch('ignore-certificate-errors')
-app.commandLine.appendSwitch('allow-insecure-localhost', 'true')
