@@ -3,7 +3,7 @@ const { app } = require('electron')
 const config = {
   mainLoadURL: 'https://q.guanmai.cn/mes',
   printLoadURL: 'https://txcdn.guanmai.cn/mes/feature-lite/print.html',
-  isOpenDevTools: false,
+  isOpenDevTools: true,
   showPrint: false,
   isOpenPrintDevTools: false,
 }

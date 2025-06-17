@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu, session } = require('electron')
 const {
   mainLoadURL,
   printLoadURL,
@@ -49,6 +49,7 @@ function createWindow() {
         },
         {
           label: '打开控制台',
+          accelerator: "CmdOrCtrl+E", 
           click: () => {
             mainWindow.webContents.openDevTools()
           }
@@ -59,7 +60,7 @@ function createWindow() {
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(myMenuTemplate))
   console.log(mainLoadURL)
-  mainWindow.loadURL(mainLoadURL)
+  mainWindow.loadURL(mainLoadURL).catch(console.error)
 
   if (isOpenDevTools) {
     mainWindow.webContents.openDevTools()
@@ -87,7 +88,6 @@ function createPrinterWindow(url) {
       enableRemoteModule: true,
       webSecurity: true,
       allowRunningInsecureContent: false
-
     },
   })
 
@@ -140,6 +140,14 @@ app.on('activate', () => {
   }
 })
 
+// app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  
+//     // Prevent having error
+//     event.preventDefault()
+//     // and continue
+//     callback(true)
+
+// })
 
 // 接受渲染进程对 print 事件
 ipcMain.handle('print', (event, payload) => {
